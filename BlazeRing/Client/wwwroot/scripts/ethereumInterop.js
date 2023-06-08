@@ -1,7 +1,8 @@
 ﻿window.ethereumInterop = {
-    getAccount: async function () {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        return accounts[0];
+    getAccount: function () {
+        return ethereum.request({ method: 'eth_requestAccounts' })
+            .then(accounts => accounts[0])
+            .catch(error => console.error(error));
     },
 
     // You can define more methods to interact with Ethereum here...

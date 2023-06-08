@@ -11,9 +11,9 @@ namespace BlazeRing.Client.Services
             _jsRuntime = jsRuntime;
         }
 
-        public ValueTask<string> GetAccountAddress()
+        public async Task<string> GetAccountAddress()
         {
-            return _jsRuntime.InvokeAsync<string>("ethereumInterop.getAccount");
+            return await _jsRuntime.InvokeAsync<string>("ethereumInterop.getAccount");
         }
     }
 }
