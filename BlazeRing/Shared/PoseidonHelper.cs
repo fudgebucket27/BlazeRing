@@ -101,14 +101,6 @@ public static class PoseidonHelper
         return parsResult;
     }
 
-
-
-
-
-
-
-
-
     static BigInteger[] addPoint(BigInteger[] a, BigInteger[] b, BigInteger p)
     {
         var res = new BigInteger[2];
