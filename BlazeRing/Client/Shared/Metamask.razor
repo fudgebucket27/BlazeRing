@@ -8,12 +8,13 @@
 }
 else
 {
-    <button @onclick="Unlock">Unlock</button>
+    <button @onclick="Unlock">@unlockStatus</button>
 }
 
 @code {
     private string? accountAddress;
     private AccountInformation? accountInformation;
+    private string? unlockStatus = "Unlock";
     private async Task Connect()
     {
         try
@@ -35,7 +36,15 @@ else
     {
         try
         {
-            var signature = await EthereumService.SignMessage(accountInformation!.keySeed!);
+            unlockStatus = "Waiting for signature...";
+            StateHasChanged();
+            var signedMessage = await EthereumService.SignMessage(accountInformation!.keySeed!);
+            unlockStatus = "Unlocking...";
+            StateHasChanged();
+            var apiSig = BlazeRingHelpers.GetApiKeyEDDSASig(signedMessage, accountInformation.owner, accountInformation.accountId);
+            unlockStatus = "Unlocked...";
+            StateHasChanged();
+            Console.WriteLine(apiSig);
         }
         catch (Exception ex)
         {
