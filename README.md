@@ -21,6 +21,8 @@ You will find unlocking is very slow when debugging, this is due to the fact tha
 Metamask unlock and retrieving Loopring API key
 
 # To Do
+Better Error Handling
+
 Handle Rejections
 
 WalletConnect
