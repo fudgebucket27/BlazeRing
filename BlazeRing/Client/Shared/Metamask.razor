@@ -9,12 +9,17 @@
 else
 {
     <button @onclick="Unlock">@unlockStatus</button>
+    @if (apiKey != null)
+    {
+        <p>Your api key is @apiKey.apiKey</p>
+    }
 }
 
 @code {
     private string? accountAddress;
     private AccountInformation? accountInformation;
     private string? unlockStatus = "Unlock";
+    private ApiKey? apiKey;
     private async Task Connect()
     {
         try
@@ -22,8 +27,8 @@ else
             accountAddress = await EthereumService.GetAccountAddress();
             if(!string.IsNullOrEmpty(accountAddress))
             {
-                var loopringApiEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.AccountInformationApiEndpoint}?owner={accountAddress}";
-                accountInformation = await Http.GetFromJsonAsync<AccountInformation>(loopringApiEndpoint);
+                var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
+                accountInformation = await Http.GetFromJsonAsync<AccountInformation>(accountInformationEndpoint);
             }
         }
         catch(Exception ex)
@@ -41,10 +46,13 @@ else
             var signedMessage = await EthereumService.SignMessage(accountInformation!.keySeed!);
             unlockStatus = "Unlocking...";
             StateHasChanged();
-            var apiSig = BlazeRingHelpers.GetApiKeyEDDSASig(signedMessage, accountInformation.owner, accountInformation.accountId);
+            var xApiSig = BlazeRingHelpers.GetApiKeyEDDSASig(signedMessage, accountInformation.owner, accountInformation.accountId);
+            unlockStatus = "Requesting API Key...";
+            Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
+            var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
+            apiKey = await Http.GetFromJsonAsync<ApiKey>(getApiKeyEndpoint);
             unlockStatus = "Unlocked...";
             StateHasChanged();
-            Console.WriteLine(apiSig);
         }
         catch (Exception ex)
         {
