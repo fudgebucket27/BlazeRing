@@ -10,5 +10,19 @@
             .catch(error => console.error(error));
     },
 
-    // You can define more methods to interact with Ethereum here...
+    signMessage: function (message) {
+        if (typeof ethereum === 'undefined') {
+            console.error('Ethereum provider not found');
+            return Promise.reject(new Error('Ethereum provider not found'));
+        }
+
+        return ethereum.request({
+            method: 'personal_sign',
+            params: [message, ethereum.selectedAddress]
+        })
+            .catch(error => {
+                console.error(error);
+                throw error;
+            });
+    }
 };

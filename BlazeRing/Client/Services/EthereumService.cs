@@ -15,5 +15,10 @@ namespace BlazeRing.Client.Services
         {
             return await _jsRuntime.InvokeAsync<string>("ethereumInterop.getAccount");
         }
+
+        public async Task<string> SignMessage(string message)
+        {
+            return await _jsRuntime.InvokeAsync<string>("ethereumInterop.signMessage", message);
+        }
     }
 }
