@@ -46,7 +46,9 @@ else
             var signedMessage = await EthereumService.SignMessage(accountInformation!.keySeed!);
             unlockStatus = "Unlocking...";
             StateHasChanged();
-            var xApiSig = BlazeRingHelpers.GetApiKeyEDDSASig(signedMessage, accountInformation.owner, accountInformation.accountId);
+            string apiUrl = "api/Signing/Sign";
+            string queryString = $"?signedEcdsaMessage={Uri.EscapeDataString(signedMessage)}&address={Uri.EscapeDataString(accountInformation.owner)}&accountId={Uri.EscapeDataString(accountInformation.accountId.ToString())}";
+            var xApiSig = await Http.GetStringAsync(apiUrl + queryString);
             unlockStatus = "Requesting API Key...";
             Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
             var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
