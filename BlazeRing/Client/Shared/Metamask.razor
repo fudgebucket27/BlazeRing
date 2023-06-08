@@ -35,7 +35,7 @@ else
     {
         try
         {
-            var signature = await EthereumService.SignMessage(accountInformation.keySeed);
+            var signature = await EthereumService.SignMessage(accountInformation!.keySeed!);
         }
         catch (Exception ex)
         {
