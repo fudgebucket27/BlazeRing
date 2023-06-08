@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using PoseidonSharp;
+﻿using PoseidonSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace BlazeRing.Server.Controllers
+namespace BlazeRing.Shared
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SigningController : ControllerBase
+    public static class BlazeRingHelper
     {
-
-        [HttpGet]
-        [Route("Sign")]
-        public async Task<string> GetApiKeyEDDSASig(string signedEcdsaMessage, string address, int accountId)
+        public static async Task<string> GetApiKeyEDDSASig(string signedEcdsaMessage, string address, int accountId)
         {
             var _keyDeets = await Task.Run(() => PoseidonHelper.GetL2PKFromMetaMask(signedEcdsaMessage, address));
             string _api_signatureBase = "GET&https%3A%2F%2Fapi3.loopring.io%2Fapi%2Fv3%2FapiKey&accountId%3D" + accountId;
