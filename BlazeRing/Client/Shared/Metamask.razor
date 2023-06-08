@@ -1,4 +1,6 @@
-﻿@inject EthereumService EthereumService
+﻿@using BlazeRing.Shared;
+@inject EthereumService EthereumService
+@inject HttpClient Http
 
 @if(string.IsNullOrEmpty(accountAddress))
 {
@@ -6,18 +8,41 @@
 }
 else
 {
-    <p>Connected with @accountAddress</p>
+    <button @onclick="Unlock">Unlock</button>
 }
 
 @code {
     private string? accountAddress;
+    private AccountInformation? accountInformation;
     private async Task Connect()
     {
         try
         {
             accountAddress = await EthereumService.GetAccountAddress();
+            if(!string.IsNullOrEmpty(accountAddress))
+            {
+                var loopringApiEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.AccountInformationApiEndpoint}?owner={accountAddress}";
+                accountInformation = await Http.GetFromJsonAsync<AccountInformation>(loopringApiEndpoint);
+            }
         }
         catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task Unlock()
+    {
+        try
+        {
+            accountAddress = await EthereumService.GetAccountAddress();
+            if (!string.IsNullOrEmpty(accountAddress))
+            {
+                var apiEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.AccountInformationApiEndpoint}?owner={accountAddress}";
+                accountInformation = await Http.GetFromJsonAsync<AccountInformation>(apiEndpoint);
+            }
+        }
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
