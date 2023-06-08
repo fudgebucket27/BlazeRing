@@ -15,7 +15,7 @@ AOT compilation is used for release publishing as PoseidonSharp is slow without 
 dotnet workload install wasm-tools
 ```
 # Caveats
-You will find unlocking can be slow this is due to the fact PoseidonSharp is slow without AOT. On release it will be under a few seconds to unlock.
+You will find unlocking is very slow when debugging, this is due to the fact that PoseidonSharp underperforms without AOT. When publishing a release, it will take under a few seconds to unlock.
 
 # What is working?
 Metamask unlock and retrieving Loopring API key
