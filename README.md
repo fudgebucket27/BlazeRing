@@ -1,6 +1,9 @@
 # BlazeRing
 Blazor WASM App Template for Loopring Wallet Connections
 
+![image](https://github.com/fudgebucket27/BlazeRing/assets/5258063/5a3b9528-4611-483e-a5b6-120524e39d95)
+
+
 # Requirements
 This was made using Visual Studio 2022.
 
