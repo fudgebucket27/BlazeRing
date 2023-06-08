@@ -1,0 +1,11 @@
+﻿@inject IJSRuntime JSRuntime
+
+<button class="btn btn-primary" @onclick="ConnectToMetaMask">Connect to MetaMask</button>
+
+@code {
+    private async Task ConnectToMetaMask()
+    {
+        var ethereum = (IJSInProcessObjectReference)await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./scripts/ethereum.js");
+        await ethereum.InvokeVoidAsync("connect");
+    }
+}
