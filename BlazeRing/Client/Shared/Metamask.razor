@@ -1,12 +1,25 @@
 ﻿@inject EthereumService EthereumService
 
+@if(string.IsNullOrEmpty(accountAddress))
+{
+    <button @onclick="Connect">Connect with MetaMask</button>
+}
+else
+{
+    <p>Connected with @accountAddress</p>
+}
+
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private string? accountAddress;
+    private async Task Connect()
     {
-        if (firstRender)
+        try
         {
-            var accountAddress = await EthereumService.GetAccountAddress();
-            // do something with accountAddress...
+            accountAddress = await EthereumService.GetAccountAddress();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 }
