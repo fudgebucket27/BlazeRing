@@ -11,3 +11,11 @@ AOT compilation is used for release publishing as PoseidonSharp is slow without 
 ```bash
 dotnet workload install wasm-tools
 ```
+
+# What is working?
+Metamask unlock and retrieving Loopring API key
+
+# To Do
+Handle Rejections
+WalletConnect
+GamestopWallet
