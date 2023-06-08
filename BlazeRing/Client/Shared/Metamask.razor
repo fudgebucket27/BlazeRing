@@ -33,18 +33,6 @@ else
 
     private async Task Unlock()
     {
-        try
-        {
-            accountAddress = await EthereumService.GetAccountAddress();
-            if (!string.IsNullOrEmpty(accountAddress))
-            {
-                var apiEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.AccountInformationApiEndpoint}?owner={accountAddress}";
-                accountInformation = await Http.GetFromJsonAsync<AccountInformation>(apiEndpoint);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
+        
     }
 }
