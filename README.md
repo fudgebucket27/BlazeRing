@@ -28,3 +28,17 @@ Handle Rejections
 WalletConnect
 
 GameStopWallet
+
+# How to Deploy to Azure
+Fork this repo and delete the .github/workflows folder
+
+Configure a deployment in Azure and point to your fork repo, this will recreate the .github/workflows folder and a new .yml file.
+
+You then need to modify the .yml file to install wasm-tools. Add the following before the build action in the workflow:
+
+```bash
+      - name: Install WASM Tools
+        run: dotnet workload install wasm-tools
+```
+
+
