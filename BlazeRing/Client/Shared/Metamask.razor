@@ -49,6 +49,7 @@ else
             StateHasChanged();         
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage,accountInformation.owner,accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
+            StateHasChanged();
             Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
             var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
             apiKey = await Http.GetFromJsonAsync<ApiKey>(getApiKeyEndpoint);
