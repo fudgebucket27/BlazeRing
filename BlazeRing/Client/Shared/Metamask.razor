@@ -4,7 +4,7 @@
 
 @if(string.IsNullOrEmpty(accountAddress))
 {
-    <button @onclick="Connect">Connect with MetaMask</button>
+    <button @onclick="Connect">@connectStatus</button>
 }
 else
 {
@@ -18,6 +18,7 @@ else
 @code {
     private string? accountAddress;
     private AccountInformation? accountInformation;
+    public string? connectStatus = "Connect with MetaMask";
     private string? unlockStatus = "Unlock";
     private ApiKey? apiKey;
     private async Task Connect()
@@ -56,6 +57,7 @@ else
         }
         catch (Exception ex)
         {
+            unlockStatus = "Rejected signing...Try Again!";
             Console.WriteLine($"Error: {ex.Message}");
         }
     }
