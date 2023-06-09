@@ -8,9 +8,13 @@
 }
 else
 {
-    <button @onclick="Unlock">@unlockStatus</button>
-    @if (apiKey != null)
+    if(apiKey == null)
     {
+        <button @onclick="Unlock">@unlockStatus</button>
+    }
+    else if (apiKey != null)
+    {
+        <button @onclick="Disconnect">Disconnect</button>
         <p>Your api key is @apiKey.apiKey</p>
     }
 }
@@ -18,9 +22,10 @@ else
 @code {
     private string? accountAddress;
     private AccountInformation? accountInformation;
+    private ApiKey? apiKey;
     public string? connectStatus = "Connect with Browser Wallet";
     private string? unlockStatus = "Unlock";
-    private ApiKey? apiKey;
+
     private async Task Connect()
     {
         try
@@ -53,8 +58,6 @@ else
             Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
             var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
             apiKey = await Http.GetFromJsonAsync<ApiKey>(getApiKeyEndpoint);
-            unlockStatus = "Unlocked...";
-            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -62,4 +65,14 @@ else
             Console.WriteLine($"Error: {ex.Message}");
         }
     }
+
+    private void Disconnect()
+    {
+        accountAddress = null;
+        accountInformation = null;
+        apiKey = null;
+        unlockStatus = "Unlock";
+        StateHasChanged();
+    }
+
 }
