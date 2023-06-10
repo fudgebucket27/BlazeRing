@@ -20,10 +20,5 @@ namespace BlazeRing.Client.Services
         {
             return await _jsRuntime.InvokeAsync<string>("ethereumInterop.signMessage", message);
         }
-
-        public async Task CreateWalletConnectQrCode(string qrCodeData)
-        {
-            await _jsRuntime.InvokeVoidAsync("drawImageOnCanvas", "qrCodeCanvas", qrCodeData);
-        }
     }
 }
