@@ -1,0 +1,137 @@
+﻿@using BlazeRing.Shared;
+@using WalletConnectSharp.Core.Models.Pairing;
+@using WalletConnectSharp.Sign.Models;
+@using WalletConnectSharp.Sign.Models.Engine;
+@using WalletConnectSharp.Sign;
+@using QRCoder;
+@inject JsService JsService
+@inject HttpClient Http
+
+@if (string.IsNullOrEmpty(accountAddress))
+{
+    <button @onclick="Connect">@connectStatus</button>
+    <canvas id="qrCodeCanvas"></canvas>
+}
+else
+{
+    if (apiKey == null)
+    {
+        <button @onclick="Unlock">@unlockStatus</button>
+    }
+    else if (apiKey != null)
+    {
+        <button @onclick="Disconnect">Disconnect</button>
+        <p>Your api key is @apiKey.apiKey</p>
+    }
+}
+
+@code {
+    private string? accountAddress;
+    private AccountInformation? accountInformation;
+    private ApiKey? apiKey;
+    public string? connectStatus = "Connect with WalletConnect";
+    private string? unlockStatus = "Unlock";
+
+    private async Task Connect()
+    {
+        try
+        {
+
+            var dappOptions = new SignClientOptions()
+                {
+                    ProjectId = "0a0b4427350974a116cebee8c20bb61b",
+                    Metadata = new Metadata()
+                    {
+                        Description = "An Example Project using BlazeRing",
+                        Icons = new[] { "https://walletconnect.com/meta/favicon.ico" },
+                        Name = "BlazeRing",
+                        Url = "https://blazering.xyz"
+                    },
+                };
+
+            var dappConnectOptions = new ConnectOptions()
+                {
+                                    RequiredNamespaces = new RequiredNamespaces()
+                    {
+                        {
+                            "eip155", new RequiredNamespace()
+                            {
+                                Methods = new[]
+                                {
+                                    "eth_sendTransaction",
+                                    "eth_signTransaction",
+                                    "eth_sign",
+                                    "personal_sign",
+                                    "eth_signTypedData",
+                                },
+                                Chains = new[]
+                                {
+                                    "eip155:1"
+                                },
+                                Events = new[]
+                                {
+                                    "chainChanged",
+                                    "accountsChanged",
+                                }
+                            }
+                        }
+                    }
+                };
+
+            var dappClient = await WalletConnectSignClient.Init(dappOptions);
+            var connectData = await dappClient.Connect(dappConnectOptions);
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(connectData.Uri, QRCodeGenerator.ECCLevel.Q);
+            PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+            byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
+
+            var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
+            await JsService.CreateWalletConnectQrCode(base64QRCode);
+
+
+            if (!string.IsNullOrEmpty(accountAddress))
+            {
+                var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
+                accountInformation = await Http.GetFromJsonAsync<AccountInformation>(accountInformationEndpoint);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task Unlock()
+    {
+        try
+        {
+            unlockStatus = "Waiting for signature...";
+            StateHasChanged();
+            var signedEcdsaMessage = await JsService.SignMessage(accountInformation!.keySeed!);
+            unlockStatus = "Unlocking...";
+            StateHasChanged();
+            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
+            unlockStatus = "Requesting API Key...";
+            StateHasChanged();
+            Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
+            Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
+            var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
+            apiKey = await Http.GetFromJsonAsync<ApiKey>(getApiKeyEndpoint);
+        }
+        catch (Exception ex)
+        {
+            unlockStatus = "Rejected signing...Try Again!";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private void Disconnect()
+    {
+        accountAddress = null;
+        accountInformation = null;
+        apiKey = null;
+        unlockStatus = "Unlock";
+        StateHasChanged();
+    }
+
+}

@@ -2,11 +2,11 @@
 using Microsoft.JSInterop;
 namespace BlazeRing.Client.Services
 {
-    public class EthereumService
+    public class JsService
     {
         private readonly IJSRuntime _jsRuntime;
 
-        public EthereumService(IJSRuntime jsRuntime)
+        public JsService(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
         }
@@ -19,6 +19,11 @@ namespace BlazeRing.Client.Services
         public async Task<string> SignMessage(string message)
         {
             return await _jsRuntime.InvokeAsync<string>("ethereumInterop.signMessage", message);
+        }
+
+        public async Task CreateWalletConnectQrCode(string qrCodeData)
+        {
+            await _jsRuntime.InvokeVoidAsync("drawImageOnCanvas", "qrCodeCanvas", qrCodeData);
         }
     }
 }
