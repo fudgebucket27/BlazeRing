@@ -17,6 +17,7 @@
     "@wagmi/core": "^1.1.1",
     "@web3modal/ethereum": "^2.4.5",
     "@web3modal/html": "^2.4.5",
+    "@web3modal/sign-html": "^2.4.5",
     "viem": "^1.0.2"
   }
 }
