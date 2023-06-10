@@ -5,7 +5,7 @@
 
 @if (string.IsNullOrEmpty(accountAddress))
 {
-    <button @onclick="Connect">@connectStatus</button>
+    <w3m-core-button></w3m-core-button>
     @if(!string.IsNullOrEmpty(base64Image))
     {
         <img src="@base64Image" width="256" height="256" />
