@@ -1,20 +1,26 @@
 ﻿@using BlazeRing.Shared;
-@inject JsService EthereumService
+@using QRCoder;
+@inject JsService JsService
 @inject HttpClient Http
 
-@if(string.IsNullOrEmpty(accountAddress))
+@if (string.IsNullOrEmpty(accountAddress))
 {
-    <button class="btn-primary" @onclick="Connect">@connectStatus</button>
+    <w3m-core-button></w3m-core-button>
+    @if(!string.IsNullOrEmpty(base64Image))
+    {
+        <img src="@base64Image" width="256" height="256" />
+        <p>Scan this QR Code using your Loopring Wallet</p>
+    }
 }
 else
 {
-    if(apiKey == null)
+    if (apiKey == null)
     {
-        <button class="btn-primary"  @onclick="Unlock">@unlockStatus</button>
+        <button @onclick="Unlock">@unlockStatus</button>
     }
     else if (apiKey != null)
     {
-        <button class="btn-primary"  @onclick="Disconnect">Disconnect</button>
+        <button @onclick="Disconnect">Disconnect</button>
         <p>Your api key is @apiKey.apiKey</p>
     }
 }
@@ -23,21 +29,31 @@ else
     private string? accountAddress;
     private AccountInformation? accountInformation;
     private ApiKey? apiKey;
-    public string? connectStatus = "Connect with Browser Wallet";
+    string? base64Image;
+
+    public string? connectStatus = "Connect with WalletConnect";
     private string? unlockStatus = "Unlock";
 
     private async Task Connect()
     {
         try
         {
-            accountAddress = await EthereumService.GetAccountAddress();
-            if(!string.IsNullOrEmpty(accountAddress))
+            connectStatus = "Connecting...";
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode("https://www.blazering.azurewebsites.net", QRCodeGenerator.ECCLevel.Q);
+            PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+            byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
+
+            var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
+            base64Image = $"data:image/png;base64,{base64QRCode}";
+            StateHasChanged();
+            if (!string.IsNullOrEmpty(accountAddress))
             {
                 var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
                 accountInformation = await Http.GetFromJsonAsync<AccountInformation>(accountInformationEndpoint);
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
@@ -49,10 +65,10 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var signedEcdsaMessage = await EthereumService.SignMessage(accountInformation!.keySeed!);
+            var signedEcdsaMessage = await JsService.SignMessage(accountInformation!.keySeed!);
             unlockStatus = "Unlocking...";
-            StateHasChanged();         
-            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage,accountInformation.owner,accountInformation.accountId);
+            StateHasChanged();
+            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
             StateHasChanged();
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already

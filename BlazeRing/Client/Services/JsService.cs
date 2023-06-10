@@ -2,11 +2,11 @@
 using Microsoft.JSInterop;
 namespace BlazeRing.Client.Services
 {
-    public class EthereumService
+    public class JsService
     {
         private readonly IJSRuntime _jsRuntime;
 
-        public EthereumService(IJSRuntime jsRuntime)
+        public JsService(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
         }

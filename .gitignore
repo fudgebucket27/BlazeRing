@@ -362,3 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /BlazeRing/Server/Properties/ServiceDependencies/BlazeRing - Zip Deploy/profile.arm.json
+
+#Ignore js bundles
+*.index.bundle.js
+*.index.bundle.js.License.txt
+index.bundle.js.License.txt
