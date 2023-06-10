@@ -5,6 +5,7 @@
 @if (string.IsNullOrEmpty(accountAddress))
 {
     <w3m-core-button></w3m-core-button>
+    <button @onclick="Connect">Get Account</button>
     @if(!string.IsNullOrEmpty(base64Image))
     {
         <img src="@base64Image" width="256" height="256" />
@@ -38,6 +39,7 @@ else
         try
         {
             connectStatus = "Connecting...";
+            accountAddress = await JsService.GetWalletConnectAccount();
             StateHasChanged();
             if (!string.IsNullOrEmpty(accountAddress))
             {
@@ -57,7 +59,7 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var signedEcdsaMessage = await JsService.SignMessage(accountInformation!.keySeed!);
+            var signedEcdsaMessage = await JsService.SignMessageWalletConnect("BLAH BLA");
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);

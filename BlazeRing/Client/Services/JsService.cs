@@ -11,14 +11,24 @@ namespace BlazeRing.Client.Services
             _jsRuntime = jsRuntime;
         }
 
-        public async Task<string> GetAccountAddress()
+        public async Task<string> GetBrowserWalletAccount()
         {
             return await _jsRuntime.InvokeAsync<string>("ethereumInterop.getAccount");
         }
 
-        public async Task<string> SignMessage(string message)
+        public async Task<string> SignMessageBrowserWallet(string message)
         {
             return await _jsRuntime.InvokeAsync<string>("ethereumInterop.signMessage", message);
+        }
+
+        public async Task<string> GetWalletConnectAccount()
+        {
+            return await _jsRuntime.InvokeAsync<string>("walletConnectInterop.getAccount");
+        }
+
+        public async Task<string> SignMessageWalletConnect(string message)
+        {
+            return await _jsRuntime.InvokeAsync<string>("signWagmiMessage", message);
         }
     }
 }
