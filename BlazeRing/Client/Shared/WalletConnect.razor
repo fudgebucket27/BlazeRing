@@ -1,5 +1,4 @@
 ﻿@using BlazeRing.Shared;
-@using QRCoder;
 @inject JsService JsService
 @inject HttpClient Http
 
@@ -39,13 +38,6 @@ else
         try
         {
             connectStatus = "Connecting...";
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode("https://www.blazering.azurewebsites.net", QRCodeGenerator.ECCLevel.Q);
-            PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-            byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
-
-            var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
-            base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
             if (!string.IsNullOrEmpty(accountAddress))
             {
