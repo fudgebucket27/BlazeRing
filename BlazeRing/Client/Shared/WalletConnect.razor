@@ -1,8 +1,4 @@
 ﻿@using BlazeRing.Shared;
-@using WalletConnectSharp.Core.Models.Pairing;
-@using WalletConnectSharp.Sign.Models;
-@using WalletConnectSharp.Sign.Models.Engine;
-@using WalletConnectSharp.Sign;
 @using QRCoder;
 @inject JsService JsService
 @inject HttpClient Http
@@ -42,63 +38,15 @@ else
     {
         try
         {
-
-            var dappOptions = new SignClientOptions()
-                {
-                    ProjectId = "0a0b4427350974a116cebee8c20bb61b",
-                    Metadata = new Metadata()
-                    {
-                        Description = "An Example Project using BlazeRing",
-                        Icons = new[] { "https://walletconnect.com/meta/favicon.ico" },
-                        Name = "BlazeRing",
-                        Url = "https://blazering.xyz"
-                    },
-                };
-
-            var dappConnectOptions = new ConnectOptions()
-                {
-                                    RequiredNamespaces = new RequiredNamespaces()
-                    {
-                        {
-                            "eip155", new RequiredNamespace()
-                            {
-                                Methods = new[]
-                                {
-                                    "eth_sendTransaction",
-                                    "eth_signTransaction",
-                                    "eth_sign",
-                                    "personal_sign",
-                                    "eth_signTypedData",
-                                },
-                                Chains = new[]
-                                {
-                                    "eip155:1"
-                                },
-                                Events = new[]
-                                {
-                                    "chainChanged",
-                                    "accountsChanged",
-                                }
-                            }
-                        }
-                    }
-                };
-
             connectStatus = "Connecting...";
-            var dappClient = await WalletConnectSignClient.Init(dappOptions);
-            var connectData = await dappClient.Connect(dappConnectOptions);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(connectData.Uri, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode("https://www.blazering.azurewebsites.net", QRCodeGenerator.ECCLevel.Q);
             PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
             byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
 
             var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
-
-            var sessionData = await connectData.Approval;
-            Console.WriteLine(sessionData);
-
             if (!string.IsNullOrEmpty(accountAddress))
             {
                 var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
