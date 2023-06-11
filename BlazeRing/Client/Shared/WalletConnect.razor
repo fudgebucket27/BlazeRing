@@ -103,6 +103,7 @@ else
             {
                 var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
                 accountInformation = await Http.GetFromJsonAsync<AccountInformation>(accountInformationEndpoint);
+                connectStatus = "Connected...";
             }
         }
         catch (Exception ex)
