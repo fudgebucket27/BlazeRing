@@ -118,7 +118,7 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var signedEcdsaMessage = await JsService.SignMessage(accountInformation!.keySeed!);
+            var signedEcdsaMessage = await JsService.SignMessageBrowserWallet(accountInformation!.keySeed!);
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
