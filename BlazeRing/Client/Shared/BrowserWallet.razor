@@ -30,7 +30,7 @@ else
     {
         try
         {
-            accountAddress = await EthereumService.GetAccountAddress();
+            accountAddress = await EthereumService.GetBrowserWalletAccount();
             if(!string.IsNullOrEmpty(accountAddress))
             {
                 var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
@@ -49,7 +49,7 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var signedEcdsaMessage = await EthereumService.SignMessage(accountInformation!.keySeed!);
+            var signedEcdsaMessage = await EthereumService.SignMessageBrowserWallet(accountInformation!.keySeed!);
             unlockStatus = "Unlocking...";
             StateHasChanged();         
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage,accountInformation.owner,accountInformation.accountId);
