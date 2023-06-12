@@ -134,8 +134,7 @@ else
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
             var request = new WalletConnectPersonalSignRequest(accountInformation.keySeed);
-            var response = await dappClient.Request<WalletConnectPersonalSignRequest, dynamic>(sessionData.Topic, request);
-            var signedEcdsaMessage = response;
+            var signedEcdsaMessage = await dappClient.Request<WalletConnectPersonalSignRequest, dynamic>(sessionData.Topic, request);
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
