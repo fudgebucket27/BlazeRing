@@ -107,7 +107,7 @@ else
                 var parameters = currentSession.Split(':');
                 accountAddress = parameters[2];
             }
-            
+
             if (!string.IsNullOrEmpty(accountAddress))
             {
                 var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
@@ -131,7 +131,7 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var signedEcdsaMessage = await JsService.SignMessageBrowserWallet(accountInformation!.keySeed!);
+            var signedEcdsaMessage = await dappClient.Approve(;
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
@@ -140,7 +140,8 @@ else
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
             Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
             var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
-            apiKey = await Http.GetFromJsonAsync<ApiKey>(getApiKeyEndpoint);
+            apiKey = await Http.GetFromJsonAsync
+    <ApiKey>(getApiKeyEndpoint);
         }
         catch (Exception ex)
         {
