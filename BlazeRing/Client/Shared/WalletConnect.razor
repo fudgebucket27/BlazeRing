@@ -98,8 +98,13 @@ else
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
             var sessionData = await connectData.Approval;
-            var request = new GetEthAccountsRequest();
-            var response = await dappClient.Request<GetEthAccountsRequest, dynamic>(sessionData.Topic, request, "eip155:1");
+            var selectedNamespace = sessionData.Namespaces["eip155:1"];
+            if (selectedNamespace != null && selectedNamespace.Accounts.Length > 0)
+            {
+                var currentSession = selectedNamespace.Accounts[0];
+                var parameters = currentSession.Split(':');
+                accountAddress = parameters[2];
+            }
             
             if (!string.IsNullOrEmpty(accountAddress))
             {

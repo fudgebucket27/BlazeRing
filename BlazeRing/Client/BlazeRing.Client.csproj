@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Shared\BlazeRing.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
