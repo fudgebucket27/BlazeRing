@@ -6,9 +6,11 @@ namespace BlazeRing.Client.Models
     public class WalletConnectPersonalSignRequest
     {
         public string message { get; set; }
-        public WalletConnectPersonalSignRequest(string message)
+        public string address { get; set; }
+        public WalletConnectPersonalSignRequest(string message, string address)
         {
             this.message = message;
+            this.address = address;
         }
     }
 }
