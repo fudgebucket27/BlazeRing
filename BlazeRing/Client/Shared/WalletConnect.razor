@@ -95,21 +95,22 @@ else
             var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
-
             var sessionData = await connectData.Approval;
-            Console.WriteLine(sessionData);
-
             if (!string.IsNullOrEmpty(accountAddress))
             {
                 var accountInformationEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetAccountInformationApiEndpoint}?owner={accountAddress}";
                 accountInformation = await Http.GetFromJsonAsync<AccountInformation>(accountInformationEndpoint);
+                base64Image = null;
                 connectStatus = "Connected...";
             }
         }
         catch (Exception ex)
         {
+            base64Image = null;
+            connectStatus = "Rejected...try again";
             Console.WriteLine($"Error: {ex.Message}");
         }
+        StateHasChanged();
     }
 
     private async Task Unlock()
