@@ -1,4 +1,5 @@
-﻿@using BlazeRing.Shared;
+﻿@using BlazeRing.Client.Models;
+@using BlazeRing.Shared;
 @using WalletConnectSharp.Core.Models.Pairing;
 @using WalletConnectSharp.Sign.Models;
 @using WalletConnectSharp.Sign.Models.Engine;
@@ -40,7 +41,7 @@ else
 
     private WalletConnectSignClient? dappClient;
     private ConnectedData? connectData;
-    private SessionStruct? sessionData;
+    private SessionStruct sessionData;
 
 
     private async Task Connect()
@@ -100,7 +101,7 @@ else
             var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
-            = await connectData.Approval;
+            sessionData = await connectData.Approval;
             var selectedNamespace = sessionData.Namespaces["eip155"];
             if (selectedNamespace != null && selectedNamespace.Accounts.Length > 0)
             {
@@ -132,9 +133,9 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var request = new WalletsRequest("ADDRESS", false);
-            var response = await _client.Request<WalletsRequest, dynamic>(connectData.Topic, request);
-            var signedEcdsaMessage = ;
+            var request = new WalletConnectPersonalSignRequest(accountInformation.keySeed);
+            var response = await dappClient.Request<WalletConnectPersonalSignRequest, dynamic>(sessionData.Topic, request);
+            var signedEcdsaMessage = response;
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
