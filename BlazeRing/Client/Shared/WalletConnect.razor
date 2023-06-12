@@ -68,8 +68,7 @@ else
                                     "eth_signTransaction",
                                     "eth_sign",
                                     "personal_sign",
-                                    "eth_signTypedData",
-                                    "eth_accounts"
+                                    "eth_signTypedData"
                                 },
                                 Chains = new[]
                                 {
@@ -97,7 +96,7 @@ else
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
             var sessionData = await connectData.Approval;
-            var selectedNamespace = sessionData.Namespaces["eip155:1"];
+            var selectedNamespace = sessionData.Namespaces["eip155"];
             if (selectedNamespace != null && selectedNamespace.Accounts.Length > 0)
             {
                 var currentSession = selectedNamespace.Accounts[0];
