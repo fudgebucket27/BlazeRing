@@ -6,6 +6,6 @@ namespace BlazeRing.Client.Models
     [RpcResponseOptions(Clock.ONE_MINUTE, 99999)]
     public class WalletConnectPersonalSignRequestResponse
     {
-        public List<string> result;
+        public string result { get; set; }
     }
 }

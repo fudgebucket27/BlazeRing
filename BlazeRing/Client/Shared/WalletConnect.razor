@@ -135,10 +135,9 @@ else
             StateHasChanged();
             var request = new WalletConnectPersonalSignRequest(){ message = accountInformation.keySeed, address = accountAddress };
             var response = await dappClient.Request<WalletConnectPersonalSignRequest, WalletConnectPersonalSignRequestResponse>(sessionData.Topic, request);
-            
             unlockStatus = "Unlocking...";
             StateHasChanged();
-            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(response.result[0], accountInformation.owner, accountInformation.accountId);
+            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(response.result, accountInformation.owner, accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
             StateHasChanged();
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
