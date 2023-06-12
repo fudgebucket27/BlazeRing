@@ -40,6 +40,7 @@ else
 
     private WalletConnectSignClient? dappClient;
     private ConnectedData? connectData;
+    private SessionStruct? sessionData;
 
 
     private async Task Connect()
@@ -99,7 +100,7 @@ else
             var base64QRCode = Convert.ToBase64String(qrCodeAsPngByteArr);
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
-            var sessionData = await connectData.Approval;
+            = await connectData.Approval;
             var selectedNamespace = sessionData.Namespaces["eip155"];
             if (selectedNamespace != null && selectedNamespace.Accounts.Length > 0)
             {
@@ -131,7 +132,9 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var signedEcdsaMessage = await dappClient.Approve(;
+            var request = new WalletsRequest("ADDRESS", false);
+            var response = await _client.Request<WalletsRequest, dynamic>(connectData.Topic, request);
+            var signedEcdsaMessage = ;
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage, accountInformation.owner, accountInformation.accountId);
@@ -140,8 +143,7 @@ else
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
             Http.DefaultRequestHeaders.Add("x-api-sig", xApiSig);
             var getApiKeyEndpoint = $"{BlazeRingConstants.ApiUrl}/{BlazeRingConstants.GetApiKeyEndpoint}?accountId={accountInformation.accountId}";
-            apiKey = await Http.GetFromJsonAsync
-    <ApiKey>(getApiKeyEndpoint);
+            apiKey = await Http.GetFromJsonAsync<ApiKey>(getApiKeyEndpoint);
         }
         catch (Exception ex)
         {
