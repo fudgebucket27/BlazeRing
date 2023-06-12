@@ -33,10 +33,14 @@ else
     private string? accountAddress;
     private AccountInformation? accountInformation;
     private ApiKey? apiKey;
-    string? base64Image;
+    private string? base64Image;
 
-    public string? connectStatus = "Connect with WalletConnect";
+    private string? connectStatus = "Connect with WalletConnect";
     private string? unlockStatus = "Unlock";
+
+    private WalletConnectSignClient? dappClient;
+    private ConnectedData? connectData;
+
 
     private async Task Connect()
     {
@@ -85,8 +89,8 @@ else
                 };
 
             connectStatus = "Connecting...";
-            var dappClient = await WalletConnectSignClient.Init(dappOptions);
-            var connectData = await dappClient.Connect(dappConnectOptions);
+            dappClient = await WalletConnectSignClient.Init(dappOptions);
+            connectData = await dappClient.Connect(dappConnectOptions);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(connectData.Uri, QRCodeGenerator.ECCLevel.Q);
             PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
