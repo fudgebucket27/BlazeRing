@@ -133,11 +133,12 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
-            var request = new WalletConnectPersonalSignRequest(accountInformation.keySeed, accountAddress);
-            var response = await dappClient.Request<WalletConnectPersonalSignRequest, dynamic>(sessionData.Topic, request);
+            var request = new WalletConnectPersonalSignRequest{ message = accountInformation.keySeed, address = accountAddress };
+            var response = await dappClient.Engine.Request<WalletConnectPersonalSignRequest, WalletConnectPersonalSignRequestResponse>(sessionData.Topic, request);
+            
             unlockStatus = "Unlocking...";
             StateHasChanged();
-            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(response, accountInformation.owner, accountInformation.accountId);
+            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(response.result[0], accountInformation.owner, accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
             StateHasChanged();
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
