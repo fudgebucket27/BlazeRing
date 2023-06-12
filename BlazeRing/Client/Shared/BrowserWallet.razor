@@ -4,17 +4,17 @@
 
 @if(string.IsNullOrEmpty(accountAddress))
 {
-    <button class="btn-primary" @onclick="Connect">@connectStatus</button>
+    <button type="button" class="btn btn-primary" @onclick="Connect">@connectStatus</button>
 }
 else
 {
     if(apiKey == null)
     {
-        <button class="btn-primary"  @onclick="Unlock">@unlockStatus</button>
+        <button type="button" class="btn btn-primary" @onclick="Unlock">@unlockStatus</button>
     }
     else if (apiKey != null)
     {
-        <button class="btn-primary"  @onclick="Disconnect">Disconnect</button>
+        <button type="button" class="btn btn-primary" @onclick="Disconnect">Disconnect</button>
         <p>Your api key is @apiKey.apiKey</p>
     }
 }

@@ -9,7 +9,7 @@
 
 @if (string.IsNullOrEmpty(accountAddress))
 {
-    <button @onclick="Connect">@connectStatus</button>
+    <button type="button" class="btn btn-primary" @onclick="Connect">@connectStatus</button>
     @if (!string.IsNullOrEmpty(base64Image))
     {
         <img src="@base64Image" width="256" height="256" />
@@ -20,11 +20,11 @@ else
 {
     if (apiKey == null)
     {
-        <button @onclick="Unlock">@unlockStatus</button>
+        <button type="button" class="btn btn-primary" @onclick="Unlock">@unlockStatus</button>
     }
     else if (apiKey != null)
     {
-        <button @onclick="Disconnect">Disconnect</button>
+        <button type ="button" class="btn btn-primary" @onclick="Disconnect">Disconnect</button>
         <p>Your api key is @apiKey.apiKey</p>
     }
 }
