@@ -17,7 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
-    <PackageReference Include="WalletConnect.Sign" Version="2.0.4" />
+    <PackageReference Include="WalletConnect.Sign" Version="2.0.5" />
   </ItemGroup>
 
   <ItemGroup>
