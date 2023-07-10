@@ -5,6 +5,7 @@
 @using WalletConnectSharp.Sign.Models.Engine;
 @using WalletConnectSharp.Sign;
 @using QRCoder;
+@using WalletConnectSharp.Storage;
 @inject JsService JsService
 @inject HttpClient Http
 
@@ -60,6 +61,7 @@ else
                         Name = "BlazeRing",
                         Url = "https://blazering.xyz"
                     },
+                    Storage = new InMemoryStorage()
                 };
 
             var dappConnectOptions = new ConnectOptions()
@@ -134,6 +136,10 @@ else
         {
             unlockStatus = "Waiting for signature...";
             StateHasChanged();
+            if(string.IsNullOrEmpty(accountInformation.keySeed))
+            {
+                accountInformation.keySeed = $"Sign this message to access Loopring Exchange: 0x0BABA1Ad5bE3a5C0a66E7ac838a129Bf948f1eA4 with key nonce: {accountInformation.keyNonce - 1}";
+            }
             var request = new WalletConnectPersonalSignRequest(accountInformation.keySeed,accountAddress);
             var response = await dappClient.Request<WalletConnectPersonalSignRequest, WalletConnectPersonalSignRequestResponse>(sessionData.Topic, request);
             unlockStatus = "Unlocking...";
