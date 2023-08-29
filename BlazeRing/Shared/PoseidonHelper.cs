@@ -4,6 +4,7 @@ using System.Numerics;
 using Blake2Fast;
 using System.Security.Cryptography;
 using Microsoft.VisualBasic;
+using NeinMath;
 
 /*
 This code was from LoopringUnity. All credit goes to them
@@ -16,39 +17,15 @@ public static class PoseidonHelper
     {
 
         var secretKey = seed % KPair.BabyJubSubOrder;
-        var publicKey = PoseidonSharp.Point.Multiply(secretKey, PoseidonSharp.Point.Generator());
+        var publicKey = PoseidonSharp.Point.Multiply(Integer.Parse(secretKey.ToString()), PoseidonSharp.Point.Generator());
 
 
         return new KPair()
         {
-            PublicKeyX = "0x" + (publicKey.Item1.ToString("x")),
-            PublicKeyY = "0x" + (publicKey.Item2.ToString("x")),
+            PublicKeyX = "0x" + (publicKey.Item1.ToHexString()),
+            PublicKeyY = "0x" + (publicKey.Item2.ToHexString()),
             SecretKey = "0x" + (secretKey.ToString("x")),
         };
-    }
-
-
-    public static BigInteger CalculateBlake2BHash(BigInteger data)
-    {
-        var sourceData = data.ToByteArray();
-        if (sourceData.Length <= 32) //pad out bytes
-        {
-            var blake2bHash = Blake2b.ComputeHash(32, sourceData);
-            var positiveHashBytes = new byte[blake2bHash.Length + 1];
-            Array.Copy(blake2bHash, positiveHashBytes, blake2bHash.Length);
-            BigInteger positiveBigInt = new BigInteger(positiveHashBytes);
-            return positiveBigInt;
-        }
-        else //truncate bytes
-        {
-            var truncatedBytes = new byte[32];
-            Array.Copy(sourceData, truncatedBytes, truncatedBytes.Length);
-            var blake2BHashBytes = Blake2b.ComputeHash(32, truncatedBytes);
-            var positiveHashBytes = new byte[blake2BHashBytes.Length + 1];
-            Array.Copy(blake2BHashBytes, positiveHashBytes, blake2BHashBytes.Length);
-            BigInteger positiveBigInt = new BigInteger(positiveHashBytes);
-            return positiveBigInt;
-        }
     }
 
     public static (string publicKeyX, string publicKeyY, string secretKey, string ethAddress) EDDSASignMetamask(string _seed, string address, bool skipPublicKeyCalculation = false, bool nextNonce = false)
@@ -90,7 +67,7 @@ public static class PoseidonHelper
         if (!skipPublicKeyCalculation)
             publicKey = mulPointEscalar(Base8, secertKey, p);
 
-        return ("0x" + publicKey[0].ToString("x").PadLeft(63, '0'), "0x" + publicKey[1].ToString("x").PadLeft(63, '0'), "0x" + secertKey.ToString("x").PadLeft(63, '0'), rawKey.ethAddress);
+        return ("0x" + publicKey[0].ToString("x").PadLeft(64, '0'), "0x" + publicKey[1].ToString("x").PadLeft(64, '0'), "0x" + secertKey.ToString("x").PadLeft(64, '0'), rawKey.ethAddress);
     }
     public static BigInteger ParseHexUnsigned(string toParse)
     {
