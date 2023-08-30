@@ -52,7 +52,7 @@ else
             var signedEcdsaMessage = await EthereumService.SignMessageBrowserWallet(accountInformation!.keySeed!);
             unlockStatus = "Unlocking...";
             StateHasChanged();         
-            var xApiSig = await BlazeRingHelper.GetApiKeyEDDSASig(signedEcdsaMessage,accountInformation.owner,accountInformation.accountId);
+            var xApiSig = await BlazeRingHelper.GenerateXApiSigHeader(signedEcdsaMessage,accountInformation.owner,accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
             StateHasChanged();
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
