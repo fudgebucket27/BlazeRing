@@ -15,9 +15,11 @@
     <button type="button" class="btn btn-primary" @onclick="Connect">@connectStatus</button>
     @if (!string.IsNullOrEmpty(base64Image))
     {
-        <img src="@base64Image" width="256" height="256" />
-        <p>Scan this QR Code using your Loopring Wallet</p>
-        <p>@connectData.Uri</p>
+        <div>
+            <img src="@base64Image" width="256" height="256" />
+            <p>Scan this QR Code using your Loopring Smart Wallet</p>
+            <p>@connectData.Uri</p>
+        </div>
     }
 }
 else
@@ -95,7 +97,10 @@ else
                 };
 
             connectStatus = "Connecting...";
-            dappClient = await WalletConnectSignClient.Init(dappOptions);
+            if(dappClient == null)
+            {
+                dappClient = await WalletConnectSignClient.Init(dappOptions);
+            }
             connectData = await dappClient.Connect(dappConnectOptions);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(connectData.Uri, QRCodeGenerator.ECCLevel.Q);
@@ -167,7 +172,6 @@ else
 
     private async Task Disconnect()
     {
-        dappClient = null;
         connectData = null;
         sessionData = null;
         accountAddress = null;
