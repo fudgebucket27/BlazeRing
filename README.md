@@ -9,9 +9,6 @@ This was made using Visual Studio 2022.
 
 .NET 7.0 must be installed as well.
 
-# Caveats
-You will find unlocking is very slow when debugging, this is due to the fact that PoseidonSharp underperforms without AOT. When publishing a release, it will take under a few seconds to unlock.
-
 # What is working?
 Browser wallet unlock and retrieving Loopring API key
 
