@@ -10,6 +10,7 @@ This was made using Visual Studio 2022.
 
 # What is working?
 Browser wallet unlock and retrieving Loopring API key
+
 WalletConnect unlock and retrieving Loopring API key
 
 # How to Deploy to Azure
