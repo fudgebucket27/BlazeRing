@@ -1,5 +1,6 @@
 ﻿@using BlazeRing.Client.Models;
 @using BlazeRing.Shared;
+@using System.Text;
 @using WalletConnectSharp.Core.Models.Pairing;
 @using WalletConnectSharp.Sign.Models;
 @using WalletConnectSharp.Sign.Models.Engine;
@@ -69,7 +70,7 @@ else
                     RequiredNamespaces = new RequiredNamespaces()
                     {
                         {
-                            "eip155", new RequiredNamespace()
+                            "eip155", new ProposedNamespace()
                             {
                                 Methods = new[]
                                 {
@@ -140,11 +141,12 @@ else
             {
                 accountInformation.keySeed = $"Sign this message to access Loopring Exchange: 0x0BABA1Ad5bE3a5C0a66E7ac838a129Bf948f1eA4 with key nonce: {accountInformation.keyNonce - 1}";
             }
-            var request = new WalletConnectPersonalSignRequest(accountInformation.keySeed,accountAddress);
-            var response = await dappClient.Request<WalletConnectPersonalSignRequest, WalletConnectPersonalSignRequestResponse>(sessionData.Topic, request);
+
+            var request = new PersonalSign( new string[] { "0x" + Convert.ToHexString(Encoding.Default.GetBytes(accountInformation.keySeed.ToLower())), accountAddress,"" } );
+            var response = await dappClient.Request<PersonalSign, string>(sessionData.Topic, request);
             unlockStatus = "Unlocking...";
             StateHasChanged();
-            var xApiSig = await BlazeRingHelper.GenerateXApiSigHeader(response.result, accountInformation.owner, accountInformation.accountId);
+            var xApiSig = await BlazeRingHelper.GenerateXApiSigHeader(response, accountInformation.owner, accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
             StateHasChanged();
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
