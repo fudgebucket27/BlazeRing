@@ -15,7 +15,11 @@ else
     else if (apiKey != null)
     {
         <button type="button" class="btn btn-primary" @onclick="Disconnect">Disconnect</button>
-        <p>Your api key is @apiKey.apiKey</p>
+        <button type="button" class="btn btn-primary" @onclick="ShowApiKey">Show API Key</button>
+        @if (showApiKeyText)
+        {
+            <p>Your api key is @apiKey.apiKey</p>
+        }
     }
 }
 
@@ -25,6 +29,13 @@ else
     private ApiKey? apiKey;
     public string? connectStatus = "Connect with Browser Wallet";
     private string? unlockStatus = "Unlock";
+
+    private bool showApiKeyText = false;
+
+    private void ShowApiKey()
+    {
+        showApiKeyText = !showApiKeyText;
+    }
 
     private async Task Connect()
     {

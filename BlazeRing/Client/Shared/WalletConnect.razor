@@ -31,7 +31,11 @@ else
     else if (apiKey != null)
     {
         <button type ="button" class="btn btn-primary" @onclick="(async () => await Disconnect())">Disconnect</button>
-        <p>Your api key is @apiKey.apiKey</p>
+        <button type="button" class="btn btn-primary" @onclick="ShowApiKey">Show API Key</button>
+        @if (showApiKeyText)
+        {
+            <p>Your api key is @apiKey.apiKey</p>
+        }
     }
 }
 
@@ -47,6 +51,13 @@ else
     private WalletConnectSignClient? dappClient;
     private ConnectedData? connectData;
     private SessionStruct? sessionData;
+
+    private bool showApiKeyText = false;
+
+    private void ShowApiKey()
+    {
+        showApiKeyText = !showApiKeyText;
+    }
 
 
     private async Task Connect()
