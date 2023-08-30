@@ -18,5 +18,14 @@ namespace BlazeRing.Shared
             Eddsa eddsa = new Eddsa(signatureBigInt, keyDetails.secretKey);
             return await Task.Run(() => eddsa.Sign());
         }
+
+        public static string StringToHex(string input)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(input);
+            StringBuilder hex = new StringBuilder(byteArray.Length * 2);
+            foreach (byte b in byteArray)
+                hex.AppendFormat("{0:x2}", b);
+            return "0x" + hex.ToString();
+        }
     }
 }

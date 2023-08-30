@@ -28,7 +28,7 @@ else
     }
     else if (apiKey != null)
     {
-        <button type ="button" class="btn btn-primary" @onclick="Disconnect">Disconnect</button>
+        <button type ="button" class="btn btn-primary" @onclick="(async () => await Disconnect())">Disconnect</button>
         <p>Your api key is @apiKey.apiKey</p>
     }
 }
@@ -44,7 +44,7 @@ else
 
     private WalletConnectSignClient? dappClient;
     private ConnectedData? connectData;
-    private SessionStruct sessionData;
+    private SessionStruct? sessionData;
 
 
     private async Task Connect()
@@ -106,7 +106,7 @@ else
             base64Image = $"data:image/png;base64,{base64QRCode}";
             StateHasChanged();
             sessionData = await connectData.Approval;
-            var selectedNamespace = sessionData.Namespaces["eip155"];
+            var selectedNamespace = sessionData?.Namespaces["eip155"];
             if (selectedNamespace != null && selectedNamespace.Accounts.Length > 0)
             {
                 var currentSession = selectedNamespace.Accounts[0];
@@ -126,6 +126,10 @@ else
         {
             base64Image = null;
             connectStatus = "Rejected...try again";
+            dappClient = null;
+            connectData = null;
+            sessionData = null;
+            accountAddress = null;
             Console.WriteLine($"Error: {ex.Message}");
         }
         StateHasChanged();
@@ -142,8 +146,8 @@ else
                 accountInformation.keySeed = $"Sign this message to access Loopring Exchange: 0x0BABA1Ad5bE3a5C0a66E7ac838a129Bf948f1eA4 with key nonce: {accountInformation.keyNonce - 1}";
             }
 
-            var request = new PersonalSign( new string[] { "0x" + Convert.ToHexString(Encoding.Default.GetBytes(accountInformation.keySeed.ToLower())), accountAddress,"" } );
-            var response = await dappClient.Request<PersonalSign, string>(sessionData.Topic, request);
+            var request = new PersonalSign( new string[] { BlazeRingHelper.StringToHex(accountInformation.keySeed), accountAddress,"" } );
+            var response = await dappClient.Request<PersonalSign, string>(sessionData?.Topic, request);
             unlockStatus = "Unlocking...";
             StateHasChanged();
             var xApiSig = await BlazeRingHelper.GenerateXApiSigHeader(response, accountInformation.owner, accountInformation.accountId);
@@ -161,12 +165,16 @@ else
         }
     }
 
-    private void Disconnect()
+    private async Task Disconnect()
     {
+        dappClient = null;
+        connectData = null;
+        sessionData = null;
         accountAddress = null;
         accountInformation = null;
         apiKey = null;
         unlockStatus = "Unlock";
+        connectStatus = "Connect";
         StateHasChanged();
     }
 
