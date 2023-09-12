@@ -166,7 +166,7 @@ else
             var response = await dappClient.Request<PersonalSign, string>(sessionData?.Topic, request);
             unlockStatus = "Unlocking...";
             StateHasChanged();
-            var xApiSig = await BlazeRingHelper.GenerateXApiSigHeader(response, accountInformation.owner, accountInformation.accountId);
+            var xApiSig = await BlazeRingHelper.GenerateXApiSigHeader(response + "02", accountInformation.owner, accountInformation.accountId);
             unlockStatus = "Requesting API Key...";
             StateHasChanged();
             Http.DefaultRequestHeaders.Remove("x-api-sig"); // remove x-api-sig if it exists already
